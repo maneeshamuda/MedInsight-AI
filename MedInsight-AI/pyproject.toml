@@ -1,0 +1,17 @@
+[project]
+name = "medinsight-ai"
+version = "2.0.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.29",
+  "python-multipart>=0.0.9",
+  "pydantic>=2.6",
+  "pypdf>=4.0",
+  "pypdfium2>=4.30",
+  "pytesseract>=0.3.10",
+  "Pillow>=10.0",
+]
+
+[tool.vercel]
+entrypoint = "backend.main:app"
