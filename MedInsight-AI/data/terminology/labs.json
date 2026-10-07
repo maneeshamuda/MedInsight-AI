@@ -1,0 +1,23 @@
+{
+ "hemoglobin": {"display":"Hemoglobin","aliases":["hemoglobin","haemoglobin","hb","hgb"],"units":["g/dl"],"default":[12.0,17.5],"plausible":[2,25],"loinc":"718-7"},
+ "wbc": {"display":"WBC (Total Leucocyte Count)","aliases":["total leukocyte count","total leucocyte count","white blood cell count","white blood cells","wbc count","wbc","tlc"],"units":["/ul"],"default":[4000,11000],"plausible":[100,200000],"loinc":"6690-2"},
+ "platelets": {"display":"Platelet Count","aliases":["platelet count","platelets","plt"],"units":["/ul"],"default":[150000,450000],"plausible":[1000,2000000],"loinc":"777-3"},
+ "rbc": {"display":"RBC Count","aliases":["total rbc count","red blood cell count","rbc count","rbc"],"units":["million/ul","mill/ul"],"default":[4.0,6.0],"plausible":[0.5,10],"loinc":"789-8"},
+ "hematocrit": {"display":"Hematocrit (PCV)","aliases":["hematocrit","haematocrit","pcv","hct"],"units":["%"],"default":[36,52],"plausible":[5,70],"loinc":"4544-3"},
+ "glucose_fasting": {"display":"Fasting Glucose","aliases":["fasting blood sugar","fasting blood glucose","fasting glucose","glucose fasting","glucose (fasting)","fbs","fbg"],"units":["mg/dl"],"default":[70,100],"plausible":[10,1000],"loinc":"1558-6"},
+ "glucose_random": {"display":"Glucose (random/unspecified)","aliases":["random blood sugar","random blood glucose","glucose random","blood glucose","blood sugar","rbs","glucose"],"units":["mg/dl"],"default":null,"plausible":[10,1000],"loinc":null},
+ "hba1c": {"display":"HbA1c","aliases":["glycosylated hemoglobin","glycated hemoglobin","glycohemoglobin","hemoglobin a1c","hba1c"],"units":["%"],"default":[4.0,5.6],"plausible":[2,20],"loinc":"4548-4"},
+ "cholesterol_total": {"display":"Total Cholesterol","aliases":["total cholesterol","cholesterol total","cholesterol"],"units":["mg/dl"],"default":[0,200],"plausible":[20,1000],"loinc":"2093-3"},
+ "non_hdl": {"display":"Non-HDL Cholesterol","aliases":["non-hdl cholesterol","non hdl cholesterol"],"units":["mg/dl"],"default":[0,130],"plausible":[5,800],"loinc":null},
+ "vldl": {"display":"VLDL Cholesterol","aliases":["vldl cholesterol","vldl"],"units":["mg/dl"],"default":null,"plausible":[1,300],"loinc":null},
+ "ldl": {"display":"LDL Cholesterol","aliases":["ldl cholesterol","low density lipoprotein","ldl-c","ldl"],"units":["mg/dl"],"default":[0,100],"plausible":[5,600],"loinc":"13457-7"},
+ "hdl": {"display":"HDL Cholesterol","aliases":["hdl cholesterol","high density lipoprotein","hdl-c","hdl"],"units":["mg/dl"],"default":[40,100],"plausible":[5,200],"loinc":"2085-9"},
+ "triglycerides": {"display":"Triglycerides","aliases":["triglycerides","triglyceride","tg"],"units":["mg/dl"],"default":[0,150],"plausible":[10,5000],"loinc":"2571-8"},
+ "creatinine": {"display":"Serum Creatinine","aliases":["serum creatinine","creatinine"],"units":["mg/dl"],"default":[0.5,1.3],"plausible":[0.1,20],"loinc":"2160-0"},
+ "tsh": {"display":"TSH","aliases":["thyroid stimulating hormone","tsh"],"units":["miu/l","uiu/ml"],"default":[0.4,4.0],"plausible":[0.001,500],"loinc":"3016-3"},
+ "alt": {"display":"ALT (SGPT)","aliases":["alanine aminotransferase","sgpt","alt"],"units":["u/l","iu/l"],"default":[7,56],"plausible":[1,5000],"loinc":"1742-6"},
+ "ast": {"display":"AST (SGOT)","aliases":["aspartate aminotransferase","sgot","ast"],"units":["u/l","iu/l"],"default":[10,40],"plausible":[1,5000],"loinc":"1920-8"},
+ "sodium": {"display":"Sodium","aliases":["serum sodium","sodium"],"units":["mmol/l","meq/l"],"default":[135,145],"plausible":[90,180],"loinc":"2951-2"},
+ "potassium": {"display":"Potassium","aliases":["serum potassium","potassium"],"units":["mmol/l","meq/l"],"default":[3.5,5.1],"plausible":[1.5,9],"loinc":"2823-3"},
+ "vitamin_d": {"display":"Vitamin D (25-OH)","aliases":["25-oh vitamin d","25 hydroxy vitamin d","vitamin d total","vitamin d"],"units":["ng/ml"],"default":[30,100],"plausible":[1,300],"loinc":null}
+}

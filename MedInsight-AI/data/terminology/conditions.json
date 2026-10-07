@@ -1,0 +1,11 @@
+{
+ "anemia": {"display":"Anemia","aliases":["anemia","anaemia"],"icd10":"D64.9","snomed":"271737000"},
+ "type2_diabetes": {"display":"Type 2 diabetes mellitus","aliases":["type 2 diabetes mellitus","type 2 diabetes","type ii diabetes","diabetes mellitus type 2","t2dm"],"icd10":"E11.9","snomed":"44054006"},
+ "diabetes_unspecified": {"display":"Diabetes mellitus","aliases":["diabetes mellitus","diabetes"],"icd10":"E14.9","snomed":"73211009"},
+ "hypertension": {"display":"Hypertension","aliases":["hypertension","high blood pressure"],"icd10":"I10","snomed":"38341003"},
+ "hypothyroidism": {"display":"Hypothyroidism","aliases":["hypothyroidism"],"icd10":"E03.9","snomed":"40930008"},
+ "hyperlipidemia": {"display":"Hyperlipidemia","aliases":["hyperlipidemia","hyperlipidaemia","dyslipidemia","dyslipidaemia"],"icd10":"E78.5","snomed":"55822004"},
+ "vitamin_d_deficiency": {"display":"Vitamin D deficiency","aliases":["vitamin d deficiency"],"icd10":"E55.9","snomed":"34713006"},
+ "asthma": {"display":"Asthma","aliases":["asthma"],"icd10":"J45.9","snomed":"195967001"},
+ "uti": {"display":"Urinary tract infection","aliases":["urinary tract infection","uti"],"icd10":"N39.0","snomed":"68566005"}
+}

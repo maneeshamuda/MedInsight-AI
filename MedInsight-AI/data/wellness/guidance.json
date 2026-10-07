@@ -1,0 +1,47 @@
+{
+"conditions": {
+ "type2_diabetes": {"eat":["Whole grains (oats, millets, brown rice), pulses and legumes","Non-starchy vegetables at every meal","Nuts, seeds, curd/yogurt without sugar"],"limit":["Sugary drinks, sweets, fruit juice","White bread, maida, refined snacks","Large portions of rice or potatoes"],"exercise":["Brisk walk 30 min, 5 days a week","A 10-15 min walk after meals helps blood sugar","Light strength training 2 days a week"],"habits":["Eat meals at regular times","Check blood sugar as your doctor advises","Check your feet daily"]},
+ "diabetes_unspecified": {"eat":["Whole grains, pulses, vegetables","Lean protein: eggs, fish, dal, paneer"],"limit":["Sugary drinks and sweets","Refined flour foods"],"exercise":["Brisk walk 30 min, 5 days a week","Walk 10-15 min after meals"],"habits":["Regular meal timings","Monitor blood sugar as advised"]},
+ "hypertension": {"eat":["Fruits and vegetables (DASH-style eating)","Low-fat dairy, oats, legumes","Unsalted nuts"],"limit":["Salt, pickles, papad, chips, instant noodles","Processed and packaged foods","Excess tea/coffee and alcohol"],"exercise":["Brisk walk or cycling 30 min, most days","Yoga and slow breathing (pranayama)","Avoid heavy lifting with breath-holding"],"habits":["Keep salt under about 5 g (1 tsp) a day","Check blood pressure regularly","Sleep 7-8 hours; manage stress"]},
+ "hypothyroidism": {"eat":["Iodised salt in normal amounts","Protein, fruits, vegetables, whole grains","Selenium sources: eggs, fish, sunflower seeds"],"limit":["Large amounts of raw cabbage, cauliflower or soy","Extra iodine/biotin supplements unless prescribed"],"exercise":["Walking 30 min daily","Light strength training; build up gradually"],"habits":["Take thyroid tablet on an empty stomach, same time daily","Keep calcium and iron tablets 4 hours away from it","Repeat thyroid tests as advised"]},
+ "hyperlipidemia": {"eat":["Oats, barley, fruits, vegetables, pulses","Fish, walnuts, flax or chia seeds","Olive, mustard or groundnut oil in small amounts"],"limit":["Fried food, bakery items, vanaspati/trans fats","Red and processed meat, full-fat dairy","Sugary foods and alcohol"],"exercise":["Brisk walk, jog or cycle 150 min a week","Strength training 2 days a week"],"habits":["Maintain a healthy weight","Do not smoke","Repeat cholesterol test as advised"]},
+ "anemia": {"eat":["Iron-rich: spinach, methi, beetroot, dates, jaggery, ragi, pulses, eggs, meat or fish","Vitamin C (lemon, amla, orange) with iron-rich meals","Folate and B12: dal, curd, eggs, dairy"],"limit":["Tea or coffee within 1 hour of meals","Calcium tablets at the same time as iron"],"exercise":["Gentle walking; increase slowly","Stop and rest if dizzy or breathless"],"habits":["Cook in an iron pan if possible","Take iron tablets only as prescribed","Find the cause with your doctor"]},
+ "vitamin_d_deficiency": {"eat":["Fortified milk, eggs, fatty fish, mushrooms","Calcium: dairy, ragi, sesame, leafy greens"],"limit":["Excess cola drinks and alcohol"],"exercise":["Walking or exercising outdoors in morning sun","Weight-bearing exercise such as walking and stair climbing"],"habits":["10-20 min of sun on arms and legs most days","Take vitamin D doses exactly as prescribed"]},
+ "asthma": {"eat":["Fruits and vegetables, whole grains","Omega-3 sources: fish, walnuts"],"limit":["Foods you know trigger symptoms","Very cold drinks if they trigger you"],"exercise":["Swimming, walking, yoga","Warm up first; keep your reliever inhaler with you"],"habits":["Avoid smoke, dust and strong fragrances","Rinse mouth after steroid inhalers","Follow your asthma action plan"]},
+ "uti": {"eat":["Water-rich foods and plain fluids","Curd or buttermilk"],"limit":["Alcohol, excess caffeine and very spicy food while symptomatic"],"exercise":["Light activity is fine; rest if unwell"],"habits":["Drink plenty of water through the day","Do not hold urine","Finish the full antibiotic course"]}
+},
+"drugs": {
+ "metformin": ["Take with or right after meals to reduce stomach upset","Limit alcohol","Long-term use can lower vitamin B12; ask about testing"],
+ "atorvastatin": ["Avoid large amounts of grapefruit or grapefruit juice","Limit alcohol","Report unexplained muscle pain to your doctor"],
+ "amlodipine": ["Avoid large amounts of grapefruit juice","Rise slowly from sitting; ankle swelling should be reported"],
+ "losartan": ["Do not use potassium-based salt substitutes unless your doctor agrees","Do not overdo high-potassium foods (coconut water, bananas) without advice","Stay hydrated, especially when ill"],
+ "warfarin": ["Keep leafy green vegetables (vitamin K) steady week to week; do not suddenly eat much more or less","Avoid cranberry juice and heavy alcohol","Do not start herbal products or supplements without asking"],
+ "aspirin": ["Take after food","Avoid alcohol"],
+ "ibuprofen": ["Take after food with water","Avoid alcohol","Avoid long-term use without medical advice"],
+ "paracetamol": ["Avoid alcohol","Do not combine with other medicines containing paracetamol"],
+ "ciprofloxacin": ["Keep milk, curd, calcium, iron and antacids 2 hours away from the dose","Drink plenty of water","Limit caffeine"],
+ "azithromycin": ["Can be taken with or without food; food may ease stomach upset","Keep antacids 2 hours apart"],
+ "amoxicillin": ["Can be taken with or without food","Finish the full course"],
+ "pantoprazole": ["Take 30-60 min before a meal","Limit spicy, oily food and alcohol"],
+ "omeprazole": ["Take 30-60 min before a meal","Limit spicy, oily food and alcohol"],
+ "cetirizine": ["May cause drowsiness; avoid alcohol"]
+},
+"labs": {
+ "hemoglobin:below_range": {"eat":["Iron-rich foods with vitamin C"],"habits":["Ask your doctor about the cause and iron/B12 testing"]},
+ "hba1c:above_range": {"eat":["Cut sugary drinks and refined carbs; fill half the plate with vegetables"],"exercise":["Walk 10-15 min after each meal"]},
+ "glucose_fasting:above_range": {"eat":["Cut sugary drinks and sweets; prefer whole grains"],"exercise":["Walk 10-15 min after meals"]},
+ "glucose_random:above_range": {"eat":["Cut sugary drinks and sweets"]},
+ "ldl:above_range": {"eat":["More oats, pulses, nuts and fibre; less fried and fatty food"],"exercise":["Aim for 150 min of brisk activity a week"]},
+ "cholesterol_total:above_range": {"eat":["More fibre; less fried food and trans fats"]},
+ "triglycerides:above_range": {"eat":["Cut sugar, sweets and alcohol; add fish or flaxseed"],"exercise":["Regular aerobic exercise lowers triglycerides"]},
+ "hdl:below_range": {"exercise":["Regular aerobic exercise raises HDL"],"habits":["Quit smoking if you smoke"]},
+ "vitamin_d:below_range": {"habits":["Morning sunlight 10-20 min; vitamin D foods"]},
+ "potassium:above_range": {"habits":["Ask your doctor before eating high-potassium foods or using salt substitutes"]},
+ "sodium:above_range": {"habits":["Drink water regularly; limit salty foods"]},
+ "creatinine:above_range": {"habits":["Stay hydrated; avoid painkillers like ibuprofen unless your doctor agrees"]},
+ "alt:above_range": {"eat":["Avoid alcohol and fried, fatty food"]},
+ "ast:above_range": {"eat":["Avoid alcohol and fried, fatty food"]},
+ "tsh:above_range": {"habits":["Discuss thyroid treatment with your doctor"]}
+},
+"general": {"eat":["Half the plate vegetables and fruit, a quarter protein, a quarter whole grains"],"exercise":["At least 150 min of moderate activity a week"],"habits":["Drink enough water","Sleep 7-8 hours","Do not smoke; limit alcohol"]}
+}

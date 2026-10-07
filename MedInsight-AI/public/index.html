@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MedInsight: understand your medical report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F4F8; --sheet:#FFFFFF; --ink:#16202E; --ink-2:#4A5668; --rule:#D9DEE7;
+  --blue:#2A3FBF; --blue-deep:#1F2F96; --blue-wash:#E8EBFA; --on-blue:#FFFFFF;
+  --ok:#1C7A57; --ok-wash:#E3F3EC; --warn:#945700; --warn-wash:#FCF0D9; --bad:#B3261E; --bad-wash:#FBE7E5;
+  --band:#CBE8DB; --focus:#2A3FBF;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#0F141D; --sheet:#171E2A; --ink:#E8ECF3; --ink-2:#9AA6B8; --rule:#2A3446;
+    --blue:#8FA0FF; --blue-deep:#B3BEFF; --blue-wash:#1D2547; --on-blue:#0F141D;
+    --ok:#5FD0A0; --ok-wash:#12302A; --warn:#F0B25A; --warn-wash:#3A2B10; --bad:#FF8B80; --bad-wash:#3D1C19;
+    --band:#1F4A3C; --focus:#B3BEFF;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--sans);font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+button,select,input,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none!important}
+
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px max(20px,calc((100vw - 1160px)/2));border-bottom:1px solid var(--rule);background:var(--sheet)}
+.brand{display:flex;align-items:center;gap:10px;font:700 1.15rem/1 var(--serif);letter-spacing:-.01em}
+.brand svg{width:26px;height:26px;color:var(--blue)}
+.lang{display:flex;align-items:center;gap:8px;font-size:.875rem;color:var(--ink-2)}
+.lang select{padding:7px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--sheet);cursor:pointer}
+
+main{max-width:1160px;margin:0 auto;padding:0 20px 64px}
+h1,h2,h3{font-family:var(--serif);margin:0;letter-spacing:-.01em}
+
+/* intro + upload */
+.intro{padding:56px 0 28px;max-width:760px}
+.intro h1{font-size:clamp(2.1rem,1.2rem + 3.6vw,3.4rem);line-height:1.08;font-weight:600}
+.intro p{margin:18px 0 0;font-size:1.125rem;color:var(--ink-2);max-width:60ch}
+.uploader{max-width:760px}
+.drop{display:flex;gap:20px;align-items:center;padding:34px 30px;border:2px dashed color-mix(in srgb,var(--blue) 55%,transparent);border-radius:14px;background:var(--sheet);cursor:pointer;transition:background .15s,border-color .15s}
+.drop:hover,.drop.over{background:var(--blue-wash);border-color:var(--blue)}
+.drop svg{flex:none;width:44px;height:44px;color:var(--blue)}
+.drop strong{display:block;font:600 1.25rem/1.3 var(--serif)}
+.drop span{display:block;color:var(--ink-2);font-size:.9rem;margin-top:4px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:9px;border:1px solid var(--blue);background:var(--blue);color:var(--on-blue);font-weight:600;cursor:pointer}
+.btn:hover{background:var(--blue-deep);border-color:var(--blue-deep)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.quiet{background:transparent;color:var(--blue-deep);border-color:var(--rule)}
+.btn.quiet:hover{background:var(--blue-wash);border-color:var(--blue)}
+.btn svg{width:18px;height:18px}
+.link{background:none;border:0;padding:6px 2px;color:var(--blue-deep);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.paste textarea{width:100%;min-height:200px;margin-top:14px;padding:14px;border:1px solid var(--rule);border-radius:12px;background:var(--sheet);font:.9rem/1.55 ui-monospace,Menlo,Consolas,monospace;resize:vertical}
+
+.queue{list-style:none;margin:16px 0 0;padding:0;border:1px solid var(--rule);border-radius:12px;background:var(--sheet);overflow:hidden}
+.queue:empty{display:none}
+.q{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:12px 14px;border-top:1px solid var(--rule)}
+.q:first-child{border-top:0}
+.q .thumb{width:40px;height:40px;border-radius:6px;background:var(--paper);object-fit:cover;display:grid;place-items:center;color:var(--ink-2);font-size:.7rem;font-weight:700;overflow:hidden}
+.q .name{font-weight:600;overflow-wrap:anywhere}
+.q .meta{display:block;font-size:.8rem;color:var(--ink-2);font-weight:400}
+.q .state{font-size:.85rem;color:var(--ink-2)}
+.q.error .state{color:var(--bad)}
+.q.error .meta{color:var(--bad)}
+.q .x{background:none;border:0;padding:6px;border-radius:6px;cursor:pointer;color:var(--ink-2);line-height:0}
+.q .x:hover{background:var(--paper);color:var(--ink)}
+.q .x[disabled]{opacity:.3;cursor:not-allowed}
+.q .x svg{width:16px;height:16px}
+.q .spin{width:16px;height:16px;border:2px solid var(--rule);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:-3px;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.notice{margin-top:14px;padding:11px 14px;border-radius:10px;background:var(--warn-wash);color:var(--warn);font-size:.92rem}
+.notice.bad{background:var(--bad-wash);color:var(--bad)}
+.privacy{margin:18px 0 0;font-size:.85rem;color:var(--ink-2);max-width:62ch}
+
+/* results */
+.resultbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:22px 0 14px}
+.resultbar h1{font-size:1.6rem;font-weight:600;overflow-wrap:anywhere}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}
+.tab{padding:7px 14px;border-radius:99px;border:1px solid var(--rule);background:var(--sheet);cursor:pointer;font-size:.9rem;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tab[aria-selected=true]{background:var(--blue);border-color:var(--blue);color:var(--on-blue);font-weight:600}
+.layout{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:40px;align-items:start}
+.doc{position:sticky;top:16px}
+.doc .frame{border:1px solid var(--rule);border-radius:12px;background:var(--sheet);overflow:hidden;height:min(460px,60vh);display:grid;place-items:center}
+.doc .frame img{width:100%;height:100%;object-fit:contain;background:var(--paper)}
+.doc .frame iframe{width:100%;height:100%;border:0}
+.doc .frame pre{margin:0;padding:14px;width:100%;height:100%;overflow:auto;font:.78rem/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;align-self:start}
+.doc .frame p{margin:0;padding:20px;text-align:center;color:var(--ink-2);font-size:.9rem}
+.facts{margin:14px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.88rem}
+.facts dt{color:var(--ink-2)}
+.facts dt::first-letter{text-transform:uppercase}
+.docnote a{color:var(--blue-deep)}
+.facts dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.docnote{margin:10px 0 0;font-size:.82rem;color:var(--ink-2)}
+
+.sec{padding:0 0 34px;margin:0 0 34px;border-bottom:1px solid var(--rule)}
+.sec>h2{font-size:1.5rem;font-weight:600;margin-bottom:14px}
+.verdict{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:12px}
+.verdict svg{flex:none;width:28px;height:28px;margin-top:2px}
+.verdict h2{font-size:1.3rem;font-weight:600}
+.verdict ul{margin:8px 0 0;padding-left:18px;font-size:.95rem}
+.verdict.review{background:var(--warn-wash);color:var(--warn)}
+.verdict.clear{background:var(--ok-wash);color:var(--ok)}
+.alerts{display:grid;gap:8px;margin-top:14px}
+.alert{padding:11px 14px;border-radius:10px;font-size:.95rem;border-left:4px solid}
+.alert.major,.alert.dose{background:var(--bad-wash);border-color:var(--bad)}
+.alert.moderate,.alert.minor,.alert.other{background:var(--warn-wash);border-color:var(--warn)}
+.alert b{font-weight:700}
+.lead{color:var(--ink-2);margin:0 0 12px}
+.read p{margin:0 0 10px;font:1.06rem/1.65 var(--serif);max-width:68ch}
+.read p.lead{font:.95rem/1.5 var(--sans);color:var(--ink-2)}
+.read p.fine{font:.85rem/1.5 var(--sans);color:var(--ink-2);margin-top:14px}
+
+/* lab results with reference-range gauge */
+.labs{list-style:none;margin:0;padding:0}
+.lab,.labhead{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.95fr) minmax(0,1.5fr) 84px;gap:16px;align-items:center}
+.labhead{padding:0 0 8px;font-size:.82rem;color:var(--ink-2);border-bottom:1px solid var(--ink)}
+.lab{padding:14px 0 14px 12px;border-bottom:1px solid var(--rule);border-left:3px solid transparent;margin-left:-15px}
+.lab.review{border-left-color:var(--warn)}
+.lab .nm{font-weight:600}
+.lab .code{display:block;font-size:.75rem;color:var(--ink-2);font-weight:400}
+.lab .num{font:600 1.35rem/1 var(--serif)}
+.lab .unit{font-size:.85rem;color:var(--ink-2)}
+.gauge{position:relative;height:10px;border-radius:5px;background:var(--rule)}
+.gauge .band{position:absolute;top:0;bottom:0;background:var(--band);border-radius:5px}
+.gauge .mk{position:absolute;top:-5px;width:4px;height:20px;border-radius:2px;background:var(--ink);transform:translateX(-50%);left:0;transition:left .9s cubic-bezier(.2,.8,.2,1)}
+.gauge .mk.out{background:var(--warn);box-shadow:0 0 0 2px var(--sheet)}
+.rangetxt{display:block;margin-top:8px;font-size:.78rem;color:var(--ink-2)}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.8rem;font-weight:600;white-space:nowrap}
+.pill.ok{background:var(--ok-wash);color:var(--ok)}
+.pill.warn{background:var(--warn-wash);color:var(--warn)}
+.pill.mute{background:var(--paper);color:var(--ink-2)}
+.pill.bad{background:var(--bad-wash);color:var(--bad)}
+
+/* medicines */
+.scroll{overflow-x:auto}
+table.rx{width:100%;border-collapse:collapse;min-width:620px}
+.rx th{padding:0 12px 8px 0;text-align:left;font-size:.82rem;font-weight:500;color:var(--ink-2);border-bottom:1px solid var(--ink)}
+.rx td{padding:14px 12px 14px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.rx tr.review td:first-child{box-shadow:inset 3px 0 0 var(--warn);padding-left:12px}
+.rx .drug{font:600 1.1rem/1.3 var(--serif)}
+.rx .sub{display:block;font-size:.76rem;color:var(--ink-2);margin-top:3px}
+.rx .quote{display:block;font-size:.76rem;color:var(--ink-2);margin-top:6px;font-style:italic}
+.rx .none{color:var(--ink-2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:6px 12px;border-radius:99px;border:1px solid var(--rule);background:var(--sheet);font-size:.9rem}
+.chip small{color:var(--ink-2);margin-left:6px}
+.chip.unsure{border-style:dashed;border-color:var(--warn);color:var(--warn)}
+.chip.unsure small{color:inherit}
+.foot{margin-top:4px;font-size:.82rem;color:var(--ink-2);max-width:70ch}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr);gap:24px}
+  .doc{position:static;order:2}
+  .doc .frame{height:300px}
+}
+@media (max-width:680px){
+  .top{padding:12px 16px}
+  main{padding:0 16px 48px}
+  .intro{padding:36px 0 22px}
+  .drop{padding:24px 18px;flex-direction:column;align-items:flex-start;gap:12px}
+  .labhead{display:none}
+  .lab{grid-template-columns:1fr auto;gap:8px 12px;padding-top:16px}
+  .lab .nm{grid-column:1}
+  .lab .st{grid-column:2;grid-row:1;justify-self:end}
+  .lab .val{grid-column:1 / -1}
+  .lab .rg{grid-column:1 / -1}
+  .q{grid-template-columns:auto 1fr auto}
+  .q .state{grid-column:2 / 3;grid-row:2}
+}
+@media print{
+  .top,.intro,.uploader,.resultbar .actions,.tabs,.doc{display:none!important}
+  body{background:#fff;color:#000}
+  .layout{display:block}
+  .gauge .mk{transition:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .gauge .mk,.drop{transition:none}
+  .q .spin{animation-duration:2.4s}
+}
+
+/* ---- v2 professional polish + wellness ---- */
+.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(8px);background:color-mix(in srgb,var(--sheet) 88%,transparent)}
+.brand small{font:600 .7rem/1 var(--sans);color:var(--blue-deep);background:var(--blue-wash);padding:4px 8px;border-radius:99px;letter-spacing:.04em}
+.hero{background:linear-gradient(135deg,var(--blue-wash),transparent 70%);border-radius:20px;padding:8px 36px 36px;margin-top:28px}
+.hero .intro{padding:36px 0 22px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.badge{display:inline-flex;gap:6px;align-items:center;font-size:.8rem;font-weight:600;padding:6px 12px;border-radius:99px;background:var(--sheet);border:1px solid var(--rule);color:var(--ink-2)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:36px 0 8px;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;background:var(--sheet);border:1px solid var(--rule);border-radius:14px;padding:20px;box-shadow:0 1px 2px rgb(0 0 0/.04)}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--blue);color:var(--on-blue);font-weight:700;margin-bottom:10px}
+.steps b{display:block;font:600 1.05rem var(--serif)}.steps span{color:var(--ink-2);font-size:.9rem}
+.sec{border-radius:14px;box-shadow:0 1px 3px rgb(16 32 64/.06)}
+.btn{box-shadow:0 1px 2px rgb(0 0 0/.12);transition:transform .1s,background .15s}.btn:active{transform:translateY(1px)}
+.sitefoot{border-top:1px solid var(--rule);margin-top:48px;padding:22px 0;color:var(--ink-2);font-size:.85rem;text-align:center}
+.well{background:var(--sheet);border:1px solid var(--rule);border-radius:14px;padding:22px;margin-top:20px}
+.well>h2{font-size:1.4rem;display:flex;gap:10px;align-items:center}
+.well .based{color:var(--ink-2);font-size:.9rem;margin:6px 0 16px}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.wcard{border:1px solid var(--rule);border-top:4px solid var(--c,var(--blue));border-radius:12px;padding:16px;background:var(--paper)}
+.wcard h3{font:600 1.05rem var(--serif);margin-bottom:8px}
+.wcard ul{margin:0;padding-left:18px}.wcard li{margin:6px 0;font-size:.93rem}
+.wcard li small{display:block;color:var(--ink-2);font-size:.76rem}
+.wcard.eat{--c:var(--ok)}.wcard.limit{--c:var(--bad)}.wcard.exercise{--c:var(--blue)}.wcard.habits{--c:var(--warn)}
+.medtips{margin-top:16px}.medtips h3{font:600 1.05rem var(--serif);margin-bottom:8px}
+.mt{border:1px solid var(--rule);border-radius:10px;padding:12px 14px;margin:8px 0;background:var(--warn-wash)}
+.mt b{display:block;margin-bottom:4px}.mt ul{margin:0;padding-left:18px;font-size:.92rem}
+.wnote{margin-top:16px;font-size:.82rem;color:var(--ink-2);border-left:3px solid var(--warn);padding-left:10px}
+@media print{.top,.sitefoot,.resultbar .actions{display:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="22" height="26" rx="3"/><path d="M16 10v10M11 15h10"/></svg>
+    MedInsight <small>AI</small>
+  </div>
+  <label class="lang"><span id="langLbl">Language</span>
+    <select id="lang"></select>
+  </label>
+</header>
+
+<main>
+  <div id="viewUpload">
+    <div class="hero"><section class="intro">
+      <h1>Understand your medical report.</h1>
+      <p>Upload a lab report or prescription as a PDF or photo. MedInsight reads the values, compares them with the ranges printed on the report, and explains them in plain language. Anything it isn’t sure about is marked for a person to check. It then suggests foods, exercise and healthy habits that fit your conditions and medicines.</p>
+      <div class="badges"><span class="badge">🔒 Not stored by default</span><span class="badge">🧪 Lab values &amp; prescriptions</span><span class="badge">🥗 Food &amp; lifestyle guidance</span><span class="badge">🌐 English · हिन्दी · తెలుగు · Español</span></div>
+    </section></div>
+
+    <section class="uploader" aria-label="Upload documents">
+      <div id="paneFile">
+        <div class="drop" id="drop" role="button" tabindex="0" aria-describedby="dropHint">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5h18l8 8v28a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M30 5v8h8"/><path d="M24 36V22M18 27l6-6 6 6"/></svg>
+          <div>
+            <strong>Drop PDFs or photos here, or choose files</strong>
+            <span id="dropHint">PDF, PNG, JPG, TIFF or WebP. Up to 10 MB each.</span>
+          </div>
+        </div>
+        <input id="file" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.webp,.bmp,.txt,application/pdf,image/*" class="sr" tabindex="-1" aria-hidden="true">
+        <input id="camera" type="file" accept="image/*" capture="environment" class="sr" tabindex="-1" aria-hidden="true">
+        <ul class="queue" id="queue" aria-label="Files to analyze"></ul>
+      </div>
+
+      <div id="panePaste" class="paste" hidden>
+        <label for="txt" class="sr">Report or prescription text</label>
+        <textarea id="txt" placeholder="Paste the text of a report or prescription here"></textarea>
+      </div>
+
+      <div id="notice" role="status" aria-live="polite"></div>
+
+      <div class="row">
+        <button class="btn" id="go" disabled>Analyze</button>
+        <button class="btn quiet" id="cameraBtn" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          Take a photo
+        </button>
+        <button class="link" id="modeBtn" type="button">Paste text instead</button>
+      </div>
+      <p class="privacy">Files go to the MedInsight server you are connected to and are not stored unless that server is set up to keep results.</p>
+    </section>
+    <ol class="steps" aria-label="How it works">
+      <li><b>Upload</b><span>PDF, photo or pasted text of your report or prescription.</span></li>
+      <li><b>Understand</b><span>Values checked against report ranges, explained in plain language.</span></li>
+      <li><b>Act</b><span>Food, exercise and habit tips matched to your results and medicines.</span></li>
+    </ol>
+  </div>
+
+  <div id="viewResults" hidden>
+    <div class="resultbar">
+      <h1 id="resTitle">Results</h1>
+      <div class="actions">
+        <button class="btn quiet" id="dl" type="button">Download JSON</button>
+        <button class="btn quiet" id="pr" type="button">Print</button>
+        <button class="btn" id="again" type="button">Analyze another</button>
+      </div>
+    </div>
+    <div class="tabs" id="tabs" role="tablist" aria-label="Analyzed files" hidden></div>
+    <div id="out"></div>
+  </div>
+</main>
+<footer class="sitefoot">MedInsight AI is an informational tool, not a medical device. It does not diagnose or replace your doctor.</footer>
+
+<script>
+const API = (window.MEDINSIGHT_API_BASE || '').replace(/\/$/, '');
+const MAX_MB = 10;
+const IMG_EXT = ['png','jpg','jpeg','tif','tiff','webp','bmp'];
+const DOC_TYPES = {prescription:'Prescription', lab_report:'Lab report', mixed:'Lab report and prescription',
+  medical_document_unparsed:'Medical document, nothing extracted', unknown:'Unrecognized document'};
+
+const $ = id => document.getElementById(id);
+function h(tag, props = {}, ...kids){
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)){
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat(2)){ if (c == null || c === false) continue; e.append(c.nodeType ? c : document.createTextNode(String(c))); }
+  return e;
+}
+function icon(svg){ const t = document.createElement('template'); t.innerHTML = svg.trim(); return t.content.firstChild; }
+const ICON = {
+  x: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg>',
+  alert: '<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3L2 24h24L14 3z"/><path d="M14 11v6M14 20.5v.5"/></svg>',
+  ok: '<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="14" r="11"/><path d="M8.5 14.5l4 4 7-8"/></svg>'
+};
+
+/* ---------- state ---------- */
+let items = [];          // {id, name, size, kind, file, text, url, status, data, error}
+let active = 0, busy = false, pasteMode = false, nextId = 1, serverInfo = null;
+
+/* ---------- helpers ---------- */
+const ext = n => (n.split('.').pop() || '').toLowerCase();
+function kindOf(file){
+  const e = ext(file.name);
+  if (e === 'pdf' || file.type === 'application/pdf') return 'pdf';
+  if (IMG_EXT.includes(e) || file.type.startsWith('image/')) return 'image';
+  if (e === 'txt' || file.type === 'text/plain') return 'text';
+  return null;
+}
+const kb = n => n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+const pct = x => Math.round(x * 100) + '%';
+function setNotice(msg, bad){ const n = $('notice'); n.replaceChildren(); if (msg) n.append(h('div', {class: 'notice' + (bad ? ' bad' : '')}, msg)); }
+function safeGet(k){ try { return localStorage.getItem(k); } catch { return null; } }
+function safeSet(k, v){ try { localStorage.setItem(k, v); } catch {} }
+
+function errorFor(status, detail){
+  if (status === 413) return 'This file is larger than the server allows.';
+  if (status === 415) return detail || 'This file type can’t be read. Use a PDF, an image or plain text.';
+  if (status === 503) return 'This server can’t read images yet because Tesseract OCR isn’t installed. Text-based PDFs still work.';
+  if (status === 400) return detail || 'The file was empty.';
+  return detail || ('The server returned an error (' + status + ').');
+}
+
+/* ---------- init ---------- */
+fetch(API + '/api/languages').then(r => r.json()).then(l => {
+  const saved = safeGet('medinsight.lang');
+  for (const [k, v] of Object.entries(l)) $('lang').append(new Option(v, k));
+  if (saved && l[saved]) $('lang').value = saved;
+}).catch(() => { $('lang').append(new Option('English', 'en')); });
+fetch(API + '/api/health').then(r => r.json()).then(i => { serverInfo = i; })
+  .catch(() => setNotice('Can’t reach the MedInsight server. Start it with “uvicorn backend.main:app” and reload this page.', true));
+
+$('lang').addEventListener('change', () => { safeSet('medinsight.lang', $('lang').value); if (!$('viewResults').hidden) renderResults(); });
+if (matchMedia('(pointer:coarse)').matches) $('cameraBtn').hidden = false;
+
+/* ---------- picking files ---------- */
+const drop = $('drop');
+drop.addEventListener('click', () => $('file').click());
+drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); $('file').click(); } });
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+$('file').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+$('camera').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+$('cameraBtn').addEventListener('click', () => $('camera').click());
+
+function addFiles(list){
+  if (busy) return;
+  const problems = [];
+  for (const f of list){
+    const kind = kindOf(f);
+    if (!kind){ problems.push(f.name + ': not a PDF, image or text file.'); continue; }
+    if (f.size > MAX_MB * 1048576){ problems.push(f.name + ': larger than ' + MAX_MB + ' MB.'); continue; }
+    if (f.size === 0){ problems.push(f.name + ': the file is empty.'); continue; }
+    if (items.some(i => i.file && i.name === f.name && i.size === f.size)) continue;
+    items.push({id: nextId++, name: f.name, size: f.size, kind, file: f, url: kind === 'text' ? null : URL.createObjectURL(f), status: 'queued'});
+  }
+  const warn = [];
+  if (problems.length) warn.push(problems.join(' '));
+  if (serverInfo && serverInfo.tesseract_available === false && items.some(i => i.kind === 'image'))
+    warn.push('This server has no Tesseract OCR installed, so photos can’t be read yet. PDFs with selectable text still work.');
+  setNotice(warn.join(' '), problems.length > 0);
+  renderQueue();
+}
+
+function removeItem(id){
+  const it = items.find(i => i.id === id); if (it && it.url) URL.revokeObjectURL(it.url);
+  items = items.filter(i => i.id !== id); setNotice(''); renderQueue();
+}
+
+function renderQueue(){
+  const q = $('queue'); q.replaceChildren();
+  for (const it of items){
+    let thumb;
+    if (it.kind === 'image'){
+      thumb = h('img', {class: 'thumb', src: it.url, alt: ''});
+      thumb.addEventListener('error', () => thumb.replaceWith(h('div', {class: 'thumb'}, ext(it.name).toUpperCase())));
+    } else thumb = h('div', {class: 'thumb'}, it.kind === 'pdf' ? 'PDF' : 'TXT');
+    const state = it.status === 'working' ? h('span', {class: 'state'}, h('span', {class: 'spin'}), 'Reading')
+      : it.status === 'done' ? h('span', {class: 'state'}, 'Done')
+      : it.status === 'error' ? h('span', {class: 'state'}, 'Failed')
+      : h('span', {class: 'state'}, 'Ready');
+    q.append(h('li', {class: 'q' + (it.status === 'error' ? ' error' : '')},
+      thumb,
+      h('div', {class: 'name'}, it.name, h('span', {class: 'meta'}, it.status === 'error' ? it.error : kb(it.size))),
+      state,
+      h('button', {class: 'x', type: 'button', 'aria-label': 'Remove ' + it.name, disabled: busy, onclick: () => removeItem(it.id)}, icon(ICON.x))));
+  }
+  updateGo();
+}
+function updateGo(){
+  const ready = pasteMode ? $('txt').value.trim().length > 0 : items.some(i => i.status !== 'done');
+  $('go').disabled = busy || !ready;
+  const n = items.filter(i => i.status !== 'done').length;
+  $('go').textContent = busy ? 'Analyzing…' : (!pasteMode && n > 1 ? 'Analyze ' + n + ' files' : 'Analyze');
+}
+$('txt').addEventListener('input', updateGo);
+$('modeBtn').addEventListener('click', () => {
+  pasteMode = !pasteMode;
+  $('paneFile').hidden = pasteMode; $('panePaste').hidden = !pasteMode;
+  $('modeBtn').textContent = pasteMode ? 'Upload files instead' : 'Paste text instead';
+  setNotice(''); updateGo();
+  if (pasteMode) $('txt').focus();
+});
+
+/* ---------- analyze ---------- */
+$('go').addEventListener('click', async () => {
+  if (busy) return;
+  setNotice('');
+  if (pasteMode){
+    const t = $('txt').value.trim(); if (!t) return;
+    items = [{id: nextId++, name: 'Pasted text', size: t.length, kind: 'text', text: t, status: 'queued'}];
+  }
+  busy = true; renderQueue();
+  for (const it of items){
+    if (it.status === 'done') continue;
+    it.status = 'working'; it.error = null; renderQueue();
+    try {
+      let res;
+      if (it.text != null){
+        res = await fetch(API + '/api/analyze/text', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({text: it.text})});
+      } else {
+        const fd = new FormData(); fd.append('file', it.file);
+        res = await fetch(API + '/api/analyze', {method: 'POST', body: fd});
+      }
+      if (!res.ok){ let d = ''; try { const j = await res.json(); d = typeof j.detail === 'string' ? j.detail : ''; } catch {} throw {status: res.status, detail: d}; }
+      it.data = await res.json(); it.status = 'done';
+    } catch (e){
+      it.status = 'error';
+      it.error = e && e.status ? errorFor(e.status, e.detail) : 'Can’t reach the MedInsight server. Check that it is running.';
+    }
+    renderQueue();
+  }
+  busy = false; renderQueue();
+  const first = items.findIndex(i => i.status === 'done');
+  if (first >= 0){ active = first; showView('results'); renderResults(); }
+});
+
+function showView(v){
+  $('viewUpload').hidden = v !== 'upload'; $('viewResults').hidden = v !== 'results';
+  window.scrollTo({top: 0});
+}
+$('again').addEventListener('click', () => {
+  items.forEach(i => i.url && URL.revokeObjectURL(i.url));
+  items = []; $('txt').value = ''; setNotice(''); renderQueue(); showView('upload');
+});
+$('dl').addEventListener('click', () => {
+  const it = items[active]; if (!it || !it.data) return;
+  const a = h('a', {href: URL.createObjectURL(new Blob([JSON.stringify(it.data, null, 2)], {type: 'application/json'})), download: it.name.replace(/\.[^.]+$/, '') + '-medinsight.json'});
+  document.body.append(a); a.click(); a.remove();
+});
+$('pr').addEventListener('click', () => print());
+
+/* ---------- reference-range gauge ---------- */
+function parseRange(s){
+  if (!s) return null;
+  const t = String(s).replace(/\s+/g, '');
+  let m = t.match(/^(-?\d+(?:\.\d+)?)[-–](-?\d+(?:\.\d+)?)$/);
+  if (m && +m[2] > +m[1]) return {lo: +m[1], hi: +m[2]};
+  m = t.match(/^[<≤]=?(-?\d+(?:\.\d+)?)$/); if (m) return {lo: null, hi: +m[1]};
+  m = t.match(/^[>≥]=?(-?\d+(?:\.\d+)?)$/); if (m) return {lo: +m[1], hi: null};
+  return null;
+}
+function gauge(f){
+  const r = parseRange(f.reference_range), v = f.numeric_value;
+  if (!r || v == null) return null;
+  let dmin, dmax, bandLo, bandHi;
+  if (r.lo != null && r.hi != null){
+    const span = r.hi - r.lo;
+    dmin = Math.min(r.lo - span * .6, v - span * .3); dmax = Math.max(r.hi + span * .6, v + span * .3);
+    if (r.lo >= 0 && v >= 0) dmin = Math.max(dmin, 0);
+    bandLo = r.lo; bandHi = r.hi;
+  } else if (r.hi != null){
+    dmin = Math.min(0, v); dmax = Math.max(r.hi * 1.6, v * 1.1); bandLo = dmin; bandHi = r.hi;
+  } else {
+    dmin = Math.max(0, Math.min(r.lo * .5, v * .9)); dmax = Math.max(r.lo * 1.6, v * 1.1); bandLo = r.lo; bandHi = dmax;
+  }
+  const pos = x => Math.min(97, Math.max(3, (x - dmin) / (dmax - dmin) * 100));
+  const out = f.status === 'above_range' || f.status === 'below_range';
+  const mk = h('div', {class: 'mk' + (out ? ' out' : '')});
+  const box = h('div', {class: 'gauge', role: 'img', 'aria-label': f.name + ' ' + f.value + ' against range ' + f.reference_range},
+    h('div', {class: 'band', style: 'left:' + pos(bandLo) + '%;width:' + (pos(bandHi) - pos(bandLo)) + '%'}), mk);
+  requestAnimationFrame(() => requestAnimationFrame(() => { mk.style.left = pos(v) + '%'; }));
+  return box;
+}
+
+/* ---------- render results ---------- */
+function renderResults(){
+  const it = items[active]; if (!it) return;
+  const lang = $('lang').value || 'en';
+  const done = items.filter(i => i.status === 'done');
+  $('resTitle').textContent = it.name;
+
+  const tabs = $('tabs'); tabs.replaceChildren();
+  tabs.hidden = done.length < 2;
+  items.forEach((i, idx) => {
+    if (i.status !== 'done') return;
+    tabs.append(h('button', {class: 'tab', role: 'tab', 'aria-selected': idx === active ? 'true' : 'false', title: i.name, onclick: () => { active = idx; renderResults(); }}, i.name));
+  });
+
+  const d = it.data, tr = d.translations[lang] || d.translations.en, L = tr.labels, s = d.safety;
+  $('langLbl').textContent = L.language;
+  $('dl').textContent = L.download; $('pr').textContent = L.print;
+  const out = $('out'); out.replaceChildren();
+
+  /* source preview + facts */
+  let frame;
+  if (it.kind === 'image'){
+    frame = h('img', {src: it.url, alt: 'Uploaded image of ' + it.name});
+    frame.addEventListener('error', () => frame.replaceWith(h('p', {}, 'This browser can’t preview this image format. The analysis is unaffected.')));
+  } else if (it.kind === 'pdf') frame = h('iframe', {src: it.url, title: 'Uploaded PDF ' + it.name});
+  else frame = h('pre', {}, it.text != null ? it.text : 'Plain text file');
+  const facts = h('dl', {class: 'facts'},
+    h('dt', {}, 'Looks like'), h('dd', {}, DOC_TYPES[d.document.type] || d.document.type),
+    h('dt', {}, 'Read from'), h('dd', {}, d.document.source === 'pdf' ? 'PDF' : d.document.source === 'image' ? 'Image (OCR)' : 'Text'),
+    d.document.source === 'image' || d.document.ocr_confidence < 1 ? [h('dt', {}, 'Legibility'), h('dd', {}, pct(d.document.ocr_confidence))] : null,
+    h('dt', {}, L.extraction), h('dd', {}, pct(d.document.confidence)));
+  const notes = (d.document.notes || []).map(n => h('p', {class: 'docnote'}, n));
+  const openLink = it.kind === 'pdf' ? h('p', {class: 'docnote'}, h('a', {href: it.url, target: '_blank', rel: 'noopener'}, 'Open the PDF in a new tab')) : null;
+  const aside = h('aside', {class: 'doc', 'aria-label': 'Your document'}, h('div', {class: 'frame'}, frame), openLink, facts, notes);
+
+  /* safety */
+  const verdict = h('div', {class: 'verdict ' + (s.requires_human_review ? 'review' : 'clear')},
+    icon(s.requires_human_review ? ICON.alert : ICON.ok),
+    h('div', {}, h('h2', {}, s.requires_human_review ? L.review : L.clear),
+      s.review_reasons.length ? h('ul', {}, s.review_reasons.map(r => h('li', {}, r))) : null));
+  const alerts = [];
+  s.interaction_alerts.forEach(a => alerts.push(h('div', {class: 'alert ' + (['major', 'moderate', 'minor'].includes(a.severity) ? a.severity : 'other')},
+    h('b', {}, a.drugs.join(' + ') + ' (' + a.severity + '): '), a.message)));
+  s.dose_alerts.forEach(a => alerts.push(h('div', {class: 'alert dose'}, h('b', {}, a.medicine + ': '), a.message)));
+  s.contradictions.forEach(a => alerts.push(h('div', {class: 'alert other'}, a.message)));
+  s.notes.forEach(n => alerts.push(h('div', {class: 'alert other'}, n)));
+  const secSafety = h('section', {class: 'sec', 'aria-label': L.safety}, verdict, alerts.length ? h('div', {class: 'alerts'}, alerts) : null);
+
+  /* plain-language explanation */
+  const lines = (tr.patient_friendly || '').split('\n').filter(Boolean);
+  const fine = lines.length > 1 ? lines.pop() : null;
+  const secRead = h('section', {class: 'sec read'}, h('h2', {}, L.explanation),
+    tr.summary ? h('p', {class: 'lead'}, tr.summary) : null,
+    lines.map(l => h('p', {}, l)), fine ? h('p', {class: 'fine'}, fine) : null);
+
+  /* labs */
+  let secLabs = null;
+  if (d.clinical_findings.length){
+    const ul = h('ul', {class: 'labs'});
+    d.clinical_findings.forEach(f => {
+      const g = gauge(f);
+      const cls = f.status === 'within_range' ? 'ok' : f.status === 'unknown' ? 'mute' : 'warn';
+      ul.append(h('li', {class: 'lab' + (f.needs_review ? ' review' : '')},
+        h('div', {class: 'nm'}, f.name, f.loinc ? h('span', {class: 'code'}, 'LOINC ' + f.loinc) : null),
+        h('div', {class: 'val'}, h('span', {class: 'num'}, f.value), f.unit ? [' ', h('span', {class: 'unit'}, f.unit)] : null),
+        h('div', {class: 'rg'}, g, h('span', {class: 'rangetxt'}, f.reference_range ? (L.reference + ' ' + f.reference_range + (f.reference_source === 'generic_adult' ? ' (general adult range)' : '')) : L.reference + ': not stated')),
+        h('div', {class: 'st'}, f.needs_review ? h('span', {class: 'pill warn'}, L.verify) : h('span', {class: 'pill ' + cls}, L[f.status] || f.status))));
+    });
+    secLabs = h('section', {class: 'sec'}, h('h2', {}, L.labs),
+      h('div', {class: 'labhead', 'aria-hidden': 'true'}, h('span', {}, L.test), h('span', {}, L.result), h('span', {}, L.reference), h('span', {}, L.status)), ul);
+  }
+
+  /* medicines */
+  let secMeds = null;
+  if (d.prescriptions.length){
+    const val = v => v ? v : h('span', {class: 'none'}, 'Not stated');
+    const tbody = h('tbody', {});
+    d.prescriptions.forEach(p => tbody.append(h('tr', {class: p.needs_review ? 'review' : ''},
+      h('td', {}, h('span', {class: 'drug'}, p.medicine_name),
+        p.rxnorm_id ? h('span', {class: 'sub'}, 'RxNorm ' + p.rxnorm_id) : null,
+        p.missing_fields.length ? h('span', {class: 'sub'}, h('span', {class: 'pill bad'}, L.missing + ': ' + p.missing_fields.join(', '))) : null,
+        p.needs_review && !p.missing_fields.length ? h('span', {class: 'sub'}, h('span', {class: 'pill warn'}, L.verify)) : null,
+        p.source_text ? h('span', {class: 'quote'}, '“' + p.source_text + '”') : null),
+      h('td', {}, val(p.strength)),
+      h('td', {}, val([p.quantity || p.form, p.frequency].filter(Boolean).join(', '))),
+      h('td', {}, val(p.timing)),
+      h('td', {}, val(p.duration)))));
+    secMeds = h('section', {class: 'sec'}, h('h2', {}, L.meds),
+      h('div', {class: 'scroll'}, h('table', {class: 'rx'},
+        h('thead', {}, h('tr', {}, ['Medicine', 'Strength', 'How often', 'When', 'For how long'].map(t => h('th', {scope: 'col'}, t)))), tbody)));
+  }
+
+  /* conditions */
+  let secCond = null;
+  if (d.conditions.length){
+    secCond = h('section', {class: 'sec'}, h('h2', {}, 'Conditions mentioned'),
+      h('div', {class: 'chips'}, d.conditions.map(c => h('span', {class: 'chip' + (c.hedged ? ' unsure' : '')}, c.name,
+        c.hedged ? h('small', {}, 'unconfirmed') : null, c.icd10 ? h('small', {}, 'ICD-10 ' + c.icd10) : null))));
+  }
+
+
+  /* wellness */
+  let secWell = null;
+  const w = d.wellness;
+  if (w && w.available){
+    const card = (cls, title, arr) => arr && arr.length ? h('div', {class: 'wcard ' + cls}, h('h3', {}, title),
+      h('ul', {}, arr.map(x => h('li', {}, x.text, h('small', {}, 'For: ' + x.because.join(', ')))))) : null;
+    secWell = h('section', {class: 'well', 'aria-label': 'Food and lifestyle guidance'},
+      h('h2', {}, '🥗 Food, exercise & healthy habits'),
+      h('p', {class: 'based'}, w.based_on && w.based_on.length ? 'Based on: ' + w.based_on.join(', ') + ', your medicines and out-of-range results.' : 'Based on your medicines and results.'),
+      h('div', {class: 'wgrid'}, card('eat', 'Eat more of', w.eat), card('limit', 'Limit or avoid', w.limit), card('exercise', 'Move', w.exercise), card('habits', 'Daily habits', w.habits)),
+      w.medicine_tips && w.medicine_tips.length ? h('div', {class: 'medtips'}, h('h3', {}, '💊 Food & medicine tips'),
+        w.medicine_tips.map(m => h('div', {class: 'mt'}, h('b', {}, m.medicine), h('ul', {}, m.tips.map(t => h('li', {}, t)))))) : null,
+      h('p', {class: 'wnote'}, w.note));
+  }
+
+  const main = h('div', {}, secSafety, secLabs, secMeds, secCond, secWell, secRead,
+    h('p', {class: 'foot'}, d.disclaimer || 'Informational extraction only. Not a diagnosis or medical advice.'));
+  out.append(h('div', {class: 'layout'}, aside, main));
+}
+</script>
+</body>
+</html>

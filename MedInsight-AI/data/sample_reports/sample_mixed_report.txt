@@ -1,0 +1,20 @@
+CITY DIAGNOSTICS LABORATORY
+Patient: Sample Patient    Age/Sex: 34 / F
+
+COMPLETE BLOOD COUNT
+Hemoglobin 10.2 g/dL 12.0 - 15.5 L
+Total Leucocyte Count 7200 /cumm 4000 - 11000
+Platelet Count 2.4 lakhs/cumm 1.5 - 4.5
+Fasting Blood Sugar 112 mg/dL 70 - 100 H
+HbA1c 5.4 % 4.0 - 5.6
+Total Cholesterol 182 mg/dL < 200
+
+Clinical notes: Findings suggest anemia. Known case of hypertension. No evidence of diabetes mellitus.
+Allergic to penicillin.
+
+Rx
+1. Tab. Amoxicillin 500 mg 1 tab TDS after food x 7 days
+2. Tab. Paracetamol 650 mg SOS for fever
+3. Tab. Pantoprazole 1-0-0 before food x 14 days
+4. Tab. Ibuprofen 400 mg BD after food x 5 days
+5. Tab. Warfarin 5 mg OD at bedtime

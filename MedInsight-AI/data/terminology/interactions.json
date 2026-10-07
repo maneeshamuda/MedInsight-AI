@@ -1,0 +1,11 @@
+[
+ {"drugs":["warfarin","aspirin"],"severity":"major","message":"Combined use raises bleeding risk significantly."},
+ {"drugs":["warfarin","ibuprofen"],"severity":"major","message":"NSAIDs with warfarin raise bleeding risk (GI and other)."},
+ {"drugs":["warfarin","paracetamol"],"severity":"moderate","message":"Regular higher-dose paracetamol can raise INR in people on warfarin."},
+ {"drugs":["warfarin","ciprofloxacin"],"severity":"moderate","message":"Can increase INR / bleeding risk; monitoring needed."},
+ {"drugs":["warfarin","azithromycin"],"severity":"moderate","message":"Can increase INR / bleeding risk; monitoring needed."},
+ {"drugs":["aspirin","ibuprofen"],"severity":"moderate","message":"Ibuprofen can blunt aspirin's antiplatelet effect and adds GI bleeding risk."},
+ {"drugs":["losartan","ibuprofen"],"severity":"moderate","message":"NSAIDs can reduce blood-pressure control and stress the kidneys with ARBs."},
+ {"drugs":["metformin","ciprofloxacin"],"severity":"moderate","message":"Fluoroquinolones can cause blood-sugar swings in people on diabetes medicines."},
+ {"drugs":["amlodipine","atorvastatin"],"severity":"minor","message":"Slightly raised atorvastatin levels; usually acceptable."}
+]

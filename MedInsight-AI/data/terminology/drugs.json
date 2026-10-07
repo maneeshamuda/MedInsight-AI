@@ -1,0 +1,16 @@
+{
+ "paracetamol": {"display":"Paracetamol","aliases":["paracetamol","acetaminophen","dolo","crocin","calpol"],"rxnorm":"161","purpose":"pain_fever","max_daily_mg":4000},
+ "amoxicillin": {"display":"Amoxicillin","aliases":["amoxicillin","amoxycillin","amoxil"],"rxnorm":"723","purpose":"antibiotic","max_daily_mg":3000},
+ "azithromycin": {"display":"Azithromycin","aliases":["azithromycin","azithral","azee"],"rxnorm":"18631","purpose":"antibiotic","max_daily_mg":500},
+ "ciprofloxacin": {"display":"Ciprofloxacin","aliases":["ciprofloxacin","ciplox","cipro"],"rxnorm":"2551","purpose":"antibiotic","max_daily_mg":1500},
+ "ibuprofen": {"display":"Ibuprofen","aliases":["ibuprofen","brufen"],"rxnorm":"5640","purpose":"pain_inflammation","max_daily_mg":3200},
+ "aspirin": {"display":"Aspirin","aliases":["aspirin","ecosprin","disprin"],"rxnorm":"1191","purpose":"aspirin_use","max_daily_mg":null},
+ "metformin": {"display":"Metformin","aliases":["metformin","glycomet","glucophage"],"rxnorm":"6809","purpose":"blood_sugar","max_daily_mg":3000},
+ "atorvastatin": {"display":"Atorvastatin","aliases":["atorvastatin","atorva","lipitor"],"rxnorm":"83367","purpose":"cholesterol","max_daily_mg":80},
+ "amlodipine": {"display":"Amlodipine","aliases":["amlodipine","amlong","norvasc"],"rxnorm":"17767","purpose":"blood_pressure","max_daily_mg":10},
+ "losartan": {"display":"Losartan","aliases":["losartan","losar","cozaar"],"rxnorm":"52175","purpose":"blood_pressure","max_daily_mg":100},
+ "pantoprazole": {"display":"Pantoprazole","aliases":["pantoprazole","pantocid","pantop"],"rxnorm":"40790","purpose":"stomach_acid","max_daily_mg":80},
+ "omeprazole": {"display":"Omeprazole","aliases":["omeprazole","omez","prilosec"],"rxnorm":"7646","purpose":"stomach_acid","max_daily_mg":80},
+ "cetirizine": {"display":"Cetirizine","aliases":["cetirizine","cetzine","zyrtec"],"rxnorm":"20610","purpose":"allergy","max_daily_mg":20},
+ "warfarin": {"display":"Warfarin","aliases":["warfarin","coumadin"],"rxnorm":"11289","purpose":"blood_thinner","max_daily_mg":null}
+}
